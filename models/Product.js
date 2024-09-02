@@ -1,13 +1,9 @@
 const mongoose = require('mongoose');
 
-const productSchema = new mongoose.Schema({
+const contactSchema = new mongoose.Schema({
     name: String,
-    sku: String,
-    description: String,
-    price: Number,
-    category: String,
-    manufacturer: manufacturerSchema,
-    amountInStock: Number
+    email: String,
+    phone: String
 });
 
 const manufacturerSchema = new mongoose.Schema({
@@ -19,12 +15,18 @@ const manufacturerSchema = new mongoose.Schema({
     contact: contactSchema
 });
 
-
-const contactSchema = new mongoose.Schema({
+const productSchema = new mongoose.Schema({
     name: String,
-    email: String,
-    phone: String
+    sku: String,
+    description: String,
+    price: Number,
+    category: String,
+    manufacturer: manufacturerSchema,
+    amountInStock: Number
 });
+
+
+
 
 const Product = mongoose.model('Product', productSchema);
 

@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
 
 //PUT /api/products/:id - Update a product by ID.
 
-router.put('/products/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
     try {
         const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, {
             new: true});
