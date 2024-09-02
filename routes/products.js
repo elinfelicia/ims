@@ -40,6 +40,45 @@ router.post('/', async (req, res) => {
 });
 
 //PUT /api/products/:id - Update a product by ID.
+
+router.put('/products/:id', async (req, res) => {
+    try {
+        const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, {
+            new: true});
+        if (!updatedProduct) return res.status(404).json({ message: 'Product not found' });
+        res.json(updatedProduct);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
 //DELETE /api/products/:id - Delete a product by ID.
+
+router.delete('/:id', async (req, res) => {
+    try {
+        const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+        if (!deletedProduct) return res.status(404).json({ message: 'Product not found'});
+        res.json({ message: 'Product deleted' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+//Summarize the total value of all products in stock
+//GET /api/products/total-stock-value
+
+
+//Summarize the total value of products in stock per manufacturer
+//GET /api/products/total-stock-value-by-manufacturer
+
+
+//Retrieve a list of all products with less than 10 units in stock
+//GET /api/products/low-stock
+
+//Retrieve a compact list of products with less than 5 items in stock (including only the manufacturer's and the contact's name, phone and email)
+//GET /api/products/critical-stock
+
+//Retrieve a list of all manufacturers the company does business with
+//GET /api/manufacturers
 
 module.exports = router
