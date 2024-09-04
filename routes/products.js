@@ -1,5 +1,6 @@
-const express = require('express');
-const Product = require('../models/Product');
+import express from 'express';
+import Product from '../models/Product.js';
+
 const router = express.Router();
 
 //GET /api/products - Retrieve a list of all products, 
@@ -145,4 +146,5 @@ router.post('/', async (req, res) => {
                 res.status(500).json({ error: err.message });
             }
         });
-        module.exports = router
+
+export default router;

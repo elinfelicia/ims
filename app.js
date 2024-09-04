@@ -1,7 +1,7 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const productRoutes = require('./routes/products')
+import express from 'express';
+import mongoose from 'mongoose';
+import productRoutes from './routes/products.js';
+import dotenv from 'dotenv';
 
 
 const app = express();
