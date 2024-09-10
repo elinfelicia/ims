@@ -1,15 +1,15 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import productRoutes from './routes/products.js';
 import dotenv from 'dotenv';
+import productRoutes from './routes/products.js';
+import graphqlServer from './graphqlServer.js';
 
+dotenv.config();
 
 const app = express();
 
-
 app.use(express.json());
 
-dotenv.config();
 
 mongoose.connect(process.env.MONGO_URI, {
     user: process.env.MONGO_USER,
@@ -22,6 +22,8 @@ mongoose.connect(process.env.MONGO_URI, {
   });
 
 app.use('/api/products', productRoutes);
+
+graphqlServer(app);
 
 const PORT = 3000;
 app.listen(PORT, () => {

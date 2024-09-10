@@ -71,7 +71,7 @@ const RootQuery = new GraphQLObjectType({
             }
         },
         totalStockValueByManufacturer: {
-            type: new GraphQLList(new GraphQLInputObjectType({
+            type: new GraphQLList(new GraphQLObjectType({
                 name: 'StockValueByManufacturer',
                 fields: {
                     manufacturer: { type: GraphQLString },
@@ -133,56 +133,98 @@ const RootQuery = new GraphQLObjectType({
 
 // Mutations
 
-const Mutation = new GraphQLObjectType ({
+const Mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
+
+      addProduct: {
         type: ProductType,
         args: {
-            name: {type: new GraphQLNonNull(GraphQLString)},
-            sku: {type: new GraphQLNonNull(GraphQLString)},
-            description: {type: GraphQLString},
-            price: {type: new GraphQLNonNull(GraphQLFloat)},
-            category: {type: GraphQLString},
-            manufacturer: {
-                type: new GraphQLNonNull(new GraphQLObjectType({
-                    name: 'ManufacturerInput',
-                    fields: {
-                        name: {type: GraphQLString},
-                        country: {type: GraphQLString},
-                        website: {type: GraphQLString},
-                        description: {type: GraphQLString},
-                        address: {type: GraphQLString},
-                        contact: {
-                            type: new GraphQLObjectType({
-                                name: 'Contact Input',
-                                fields: {
-                                    name: {type: GraphQLString},
-                                    email: {type: GraphQLString},
-                                    phone: {type: GraphQLString}
-                                }
-                            })
-                        }
-                    }
-                }))
-            },
-            amountInStock: {type: new GraphQLNonNull(GraphQLInt)}
+          name: { type: new GraphQLNonNull(GraphQLString) },
+          sku: { type: new GraphQLNonNull(GraphQLString) },
+          description: { type: GraphQLString },
+          price: { type: new GraphQLNonNull(GraphQLFloat) },
+          category: { type: GraphQLString },
+          manufacturer: {
+            type: new GraphQLNonNull(
+              new GraphQLInputObjectType({
+                name: 'ManufacturerInput',
+                fields: {
+                  name: { type: GraphQLString },
+                  country: { type: GraphQLString },
+                  website: { type: GraphQLString },
+                  description: { type: GraphQLString },
+                  address: { type: GraphQLString },
+                  contact: {
+                    type: new GraphQLInputObjectType({
+                      name: 'ContactInput',
+                      fields: {
+                        name: { type: GraphQLString },
+                        email: { type: GraphQLString },
+                        phone: { type: GraphQLString }
+                      }
+                    })
+                  }
+                }
+              })
+            )
+          },
+          amountInStock: { type: new GraphQLNonNull(GraphQLInt) }
         },
         resolve(parent, args) {
-            const newProduct = new Product({
-                name: args.name,
-                sku: args.sku,
-                description: args.description,
-                price: args.price,
-                category: args.category,
-                manufacturer: args.manufacturer,
-                amountInStock: args.amountInStock
-            });
-            return newProduct.save();
+          const newProduct = new Product({
+            name: args.name,
+            sku: args.sku,
+            description: args.description,
+            price: args.price,
+            category: args.category,
+            manufacturer: args.manufacturer,
+            amountInStock: args.amountInStock
+          });
+          return newProduct.save();
         }
-    },
+      },
+  
+      updateProduct: {
+        type: ProductType,
+        args: {
+          id: { type: new GraphQLNonNull(GraphQLID) },
+          name: { type: GraphQLString },
+          sku: { type: GraphQLString },
+          description: { type: GraphQLString },
+          price: { type: GraphQLFloat },
+          category: { type: GraphQLString },
+          amountInStock: { type: GraphQLInt }
+        },
+        resolve(parent, args) {
+          return Product.findByIdAndUpdate(
+            args.id,
+            {
+              name: args.name,
+              sku: args.sku,
+              description: args.description,
+              price: args.price,
+              category: args.category,
+              amountInStock: args.amountInStock
+            },
+            { new: true }
+          );
+        }
+      },
+  
+     
+      deleteProduct: {
+        type: ProductType,
+        args: { id: { type: new GraphQLNonNull(GraphQLID) } },
+        resolve(parent, args) {
+          return Product.findByIdAndDelete(args.id);
+        }
+      }
+    }
+  });
 
-    updateProduct
-})
 
-
-export default RootQuery;
+export default new GraphQLSchema({
+    query: RootQuery,
+    mutation: Mutation
+});
